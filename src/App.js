@@ -46,6 +46,7 @@ export default function App() {
         )}
         <input 
           autocomplete="off"
+          
           type="search" 
           id="search-bar" 
           placeholder="Search a location"
