@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import './App.css';
 
 export default function App() {
-  const [weather, setWeather] = useState({});
+  const [weather, setWeather] = useState({});   
   const [location, setLocation] = useState('');
   const urlData = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&APPID=50ac4dd4f6375cc8beb99bdb3e29da0a`;
   const [flag, setFlag] = useState(false);
@@ -25,7 +25,7 @@ export default function App() {
     fetch(urlData).then(res => res.json()).then(data => {
       setWeather(data);
       setLocationBuffer(location);
-      setLocation('');
+      // setLocation('');
     });
   }
 
@@ -45,8 +45,6 @@ export default function App() {
           <div className="back-btn" onClick={backPress}></div>
         )}
         <input 
-          autocomplete="off"
-          
           type="search" 
           id="search-bar" 
           placeholder="Search a location"

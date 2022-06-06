@@ -30,8 +30,7 @@
     background-color: #666;
     border-radius: 5px;
     padding: 10px;
-    transition: border-radius 0.3s, background-color 0.3s;;
-    
+    transition: border-radius 0.3s, background-color 0.3s;    
 }
 
 .back-btn{
