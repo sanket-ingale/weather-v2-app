@@ -25,7 +25,7 @@ export default function App() {
     fetch(urlData).then(res => res.json()).then(data => {
       setWeather(data);
       setLocationBuffer(location);
-      // setLocation('');
+      setLocation('');
     });
   }
 
