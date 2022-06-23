@@ -1,37 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './App.css';
 
 export default function App() {
   const [weather, setWeather] = useState({});   
   const [location, setLocation] = useState('');
+  const [imgPath, setImgPath] = useState('');
+  const [btnFlag, setBtnFlag] = useState(false);
   const urlData = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&APPID=50ac4dd4f6375cc8beb99bdb3e29da0a`;
   const [flag, setFlag] = useState(false);
   const [locationBuffer, setLocationBuffer]  = useState('');
 
-  const enterPress = (event) => {
-    if(event.key === "Enter"){
-      setLocation(event.target.value)
-      getWeather();
-    }
+  const enterCity = event => {
+    setLocation(event.target.value);
+    console.log(event.target.value);
   }
 
-  const searchPress = () => {
+  const enterPress = (event) => {
+    if(event.key === 'Enter'){
       getWeather();
+    }
+      setFlag(true);
+  }
+  const enterSearch = () => {
+    getWeather();
+    setFlag(true);
   }
 
   const getWeather = () => {
-    setFlag(true);
-    console.log(urlData);
+    console.log('Press' + location);
     fetch(urlData).then(res => res.json()).then(data => {
-      setWeather(data);
-      setLocationBuffer(location);
-      setLocation('');
-    });
-  }
+    setWeather(data);
+    setLocationBuffer(location);
+    setImgPath(`https://source.unsplash.com/500x500/?${location}`)
+  })
+}
+
+
+
+  // const getWeather = () => {
+  //   setFlag(true);
+  // }
 
   const backPress = () => { 
     setFlag(false);
+    setLocation('');
+    setWeather({});
   }
+
+  useEffect(() => {
+    setBtnFlag(false);
+    if(location !== '')
+    {
+      setBtnFlag(true);
+    }
+
+  }, [location, setBtnFlag]);
 
   return (
     <div className="app">
@@ -45,17 +68,17 @@ export default function App() {
           <div className="back-btn" onClick={backPress}></div>
         )}
         <input 
-          type="search" 
+          type="input" 
           id="search-bar" 
           placeholder="Search a location"
-          onChange={event => setLocation(event.target.value)}
-          value={location}
+          name="location"
+          onChange={enterCity}
           onKeyPress={enterPress}
+          value={location}
         />
-        {location === '' ? (null) : 
-        (
-          <div className="search-btn" onClick={searchPress}></div>
-        )}
+        {btnFlag && <div type="button" className="search-btn" onClick={enterSearch}></div>}
+        
+       
       </div>
       {weather.cod === "404" && flag ? (
         <div className="error-msg">
@@ -70,8 +93,8 @@ export default function App() {
           <div 
             className="container" 
             id="dynamic-image"
-            style= {{
-              backgroundImage: `url('https://source.unsplash.com/500x500/?${location}')`
+            style={{
+              backgroundImage: `url(${imgPath})`
             }}
           >
             <div className="block">
