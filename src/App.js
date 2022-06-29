@@ -21,7 +21,7 @@ export default function App() {
     }
       setFlag(true);
   }
-  const enterSearch = () => {
+  const searchClick = () => {
     getWeather();
     setFlag(true);
   }
@@ -29,17 +29,11 @@ export default function App() {
   const getWeather = () => {
     console.log('Press' + location);
     fetch(urlData).then(res => res.json()).then(data => {
-    setWeather(data);
-    setLocationBuffer(location);
-    setImgPath(`https://source.unsplash.com/500x500/?${location}`)
-  })
-}
-
-
-
-  // const getWeather = () => {
-  //   setFlag(true);
-  // }
+      setWeather(data);
+      setLocationBuffer(location);
+      setImgPath(`https://source.unsplash.com/500x500/?${location}`)
+    })
+  }
 
   const backPress = () => { 
     setFlag(false);
@@ -76,7 +70,7 @@ export default function App() {
           onKeyPress={enterPress}
           value={location}
         />
-        {btnFlag && <div type="button" className="search-btn" onClick={enterSearch}></div>}
+        {btnFlag && <div type="button" className="search-btn" onClick={searchClick}></div>}
         
        
       </div>
