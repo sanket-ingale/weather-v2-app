@@ -6,9 +6,9 @@ export default function App() {
   const [location, setLocation] = useState('');
   const [imgPath, setImgPath] = useState('');
   const [btnFlag, setBtnFlag] = useState(false);
-  const urlData = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&APPID=50ac4dd4f6375cc8beb99bdb3e29da0a`;
   const [flag, setFlag] = useState(false);
   const [locationBuffer, setLocationBuffer]  = useState('');
+  const urlData = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&APPID=50ac4dd4f6375cc8beb99bdb3e29da0a`;
 
   const enterCity = event => {
     setLocation(event.target.value);
@@ -18,8 +18,8 @@ export default function App() {
   const enterPress = (event) => {
     if(event.key === 'Enter'){
       getWeather();
-    }
       setFlag(true);
+    }
   }
   const searchClick = () => {
     getWeather();
@@ -30,6 +30,7 @@ export default function App() {
     console.log('Press' + location);
     fetch(urlData).then(res => res.json()).then(data => {
       setWeather(data);
+      setLocation('');
       setLocationBuffer(location);
       setImgPath(`https://source.unsplash.com/500x500/?${location}`)
     })
@@ -50,46 +51,47 @@ export default function App() {
 
   }, [location, setBtnFlag]);
 
+  const convertTime = (time) => {
+    const temp = new Date(time * 1000);
+    return (
+      `${temp.getHours() > 9 ? temp.getHours() : ("0" + temp.getHours())} : ${temp.getMinutes() > 9 ? temp.getMinutes() : ("0" + temp.getMinutes())}`
+    );
+  }
+
   return (
-    <div className="app">
-      {!flag ?(
+    <div className="container">
+      {!flag && (
         <div className="title">
             Welcome<br/>to the<br/>Weather App
         </div>
-      ):(null)}
+      )}
+
       <div className="search-bar">
-        {!flag ? (null) : (
-          <div className="back-btn" onClick={backPress}></div>
-        )}
+        {flag && <div className="back-btn" onClick={backPress}></div>}
         <input 
-          type="input" 
-          id="search-bar" 
+          type="input"  
           placeholder="Search a location"
           name="location"
           onChange={enterCity}
           onKeyPress={enterPress}
           value={location}
         />
-        {btnFlag && <div type="button" className="search-btn" onClick={searchClick}></div>}
-        
-       
+        {btnFlag && <div type="button" className="search-btn" onClick={searchClick}></div>}               
       </div>
-      {weather.cod === "404" && flag ? (
+
+      {weather.cod === "404" && flag && (
         <div className="error-msg">
           There is no such place named "{locationBuffer}" 
         </div>
-      ) : (null)} 
-      {typeof weather.main === "undefined" ? (null) : 
+      )} 
+
+      {typeof weather.main !== "undefined" && 
       (<>
-        {!flag ? (
-          <></>
-        ) : (
+        {flag && (
           <div 
-            className="container" 
+            className="data-container" 
             id="dynamic-image"
-            style={{
-              backgroundImage: `url(${imgPath})`
-            }}
+            style={{backgroundImage: `url(${imgPath})`}}
           >
             <div className="block">
               <div className="left-block">
@@ -102,32 +104,14 @@ export default function App() {
                   <img className="sunrise" src={require("../src/icons/sunrise.png")} alt="sunrise-icon"/>
                   {/* <p>Sunrise</p> */}
                   <p>
-                    {new Date(weather.sys.sunrise * 1000).getHours() > 9 ? (
-                      new Date(weather.sys.sunrise * 1000).getHours()
-                    ) : (
-                      "0"+ new Date(weather.sys.sunrise * 1000).getHours()
-                    )}:
-                    {new Date(weather.sys.sunrise * 1000).getMinutes() > 9 ? (
-                      new Date(weather.sys.sunrise * 1000).getMinutes()
-                    ) : (
-                      "0"+ new Date(weather.sys.sunrise * 1000).getMinutes()
-                    )}
+                    {convertTime(weather.sys.sunrise)}
                   </p>
                 </div>
                 <div className="info">
                   <img className="sunset" src={require("../src/icons/sunset.png")} alt="sunset-icon"/>
                   {/* <p>Sunset</p> */}
                   <p>
-                    {new Date(weather.sys.sunset * 1000).getHours() > 9 ? (
-                      new Date(weather.sys.sunset * 1000).getHours()
-                    ) : (
-                      "0"+ new Date(weather.sys.sunset * 1000).getHours()
-                    )}:
-                    {new Date(weather.sys.sunset * 1000).getMinutes() > 9 ? (
-                      new Date(weather.sys.sunset * 1000).getMinutes()
-                    ) : (
-                      "0"+ new Date(weather.sys.sunset * 1000).getMinutes()
-                    )}
+                    {convertTime(weather.sys.sunset)}
                   </p>
                 </div>
                 <div className="info">
