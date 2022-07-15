@@ -1,55 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import './App.css';
 
 export default function App() {
   const [weather, setWeather] = useState({});   
   const [location, setLocation] = useState('');
   const [imgPath, setImgPath] = useState('');
-  const [btnFlag, setBtnFlag] = useState(false);
-  const [flag, setFlag] = useState(false);
+  const [searchBtnFlag, setSearchBtnFlag] = useState(false);
+  const [backBtnFlag, setBackBtnFlag] = useState(false);
   const [locationBuffer, setLocationBuffer]  = useState('');
   const urlData = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&APPID=50ac4dd4f6375cc8beb99bdb3e29da0a`;
 
   const enterCity = event => {
     setLocation(event.target.value);
-    console.log(event.target.value);
+    setSearchBtnFlag(true);
   }
 
-  const enterPress = (event) => {
-    if(event.key === 'Enter'){
-      getWeather();
-      setFlag(true);
-    }
-  }
-  const searchClick = () => {
-    getWeather();
-    setFlag(true);
-  }
+  const enterPress = (event) => event.key === 'Enter' && getWeather();
+  const searchClick = () => getWeather();
 
   const getWeather = () => {
     console.log('Press' + location);
-    fetch(urlData).then(res => res.json()).then(data => {
-      setWeather(data);
-      setLocation('');
-      setLocationBuffer(location);
-      setImgPath(`https://source.unsplash.com/500x500/?${location}`)
-    })
+    fetch(urlData).then(res => res.json()).then(data => setWeather(data))
+    setLocation('');
+    setSearchBtnFlag(false);
+    setBackBtnFlag(true);
+    setLocationBuffer(location);
+    setImgPath(`https://source.unsplash.com/500x500/?${location}`)
   }
 
   const backPress = () => { 
-    setFlag(false);
+    setSearchBtnFlag(false);
+    setBackBtnFlag(false);
     setLocation('');
     setWeather({});
   }
-
-  useEffect(() => {
-    setBtnFlag(false);
-    if(location !== '')
-    {
-      setBtnFlag(true);
-    }
-
-  }, [location, setBtnFlag]);
 
   const convertTime = (time) => {
     const temp = new Date(time * 1000);
@@ -60,14 +44,14 @@ export default function App() {
 
   return (
     <div className="container">
-      {!flag && (
+      {!backBtnFlag && (
         <div className="title">
             Welcome<br/>to the<br/>Weather App
         </div>
       )}
 
       <div className="search-bar">
-        {flag && <div className="back-btn" onClick={backPress}></div>}
+        {backBtnFlag && <div className="back-btn" onClick={backPress}></div>}
         <input 
           type="input"  
           placeholder="Search a location"
@@ -76,18 +60,17 @@ export default function App() {
           onKeyPress={enterPress}
           value={location}
         />
-        {btnFlag && <div type="button" className="search-btn" onClick={searchClick}></div>}               
+        {searchBtnFlag && <div type="button" className="search-btn" onClick={searchClick}></div>}               
       </div>
 
-      {weather.cod === "404" && flag && (
+      {weather.cod === "404" && backBtnFlag && (
         <div className="error-msg">
           There is no such place named "{locationBuffer}" 
         </div>
       )} 
 
       {typeof weather.main !== "undefined" && 
-      (<>
-        {flag && (
+        backBtnFlag && (
           <div 
             className="data-container" 
             id="dynamic-image"
@@ -127,8 +110,8 @@ export default function App() {
               </div>
             </div>
           </div>
-        )}</>
-      )}
+        )
+      }
     </div>
   );
 }
