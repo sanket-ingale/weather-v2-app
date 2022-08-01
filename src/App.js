@@ -53,7 +53,7 @@ export default function App() {
       <div className="search-bar">
         {backBtnFlag && <div className="back-btn" onClick={backPress}></div>}
         <input 
-          type="input"  
+          type="search"  
           placeholder="Search a location"
           name="location"
           onChange={enterCity}
